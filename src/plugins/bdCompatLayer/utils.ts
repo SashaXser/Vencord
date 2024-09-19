@@ -17,22 +17,23 @@
 */
 
 import { Link } from "@components/Link";
+import { PluginNative } from "@utils/types";
 import { Forms, React } from "@webpack/common";
 import * as fflate from "fflate";
 
 import { getGlobalApi } from "./fakeBdApi";
 import { addCustomPlugin, convertPlugin, removeAllCustomPlugins } from "./pluginConstructor";
 
-export function getDeferred() {
-    let resolve: undefined | ((arg: any) => void) = undefined;
-    let reject: undefined | ((e?: Error) => void) = undefined;
+export function getDeferred<T = any>() {
+    let resolve: (value: T | PromiseLike<T>) => void;
+    let reject: (reason?: any) => void;
 
-    const promise = new Promise((resolveCb, rejectCb) => {
+    const promise = new Promise<T>((resolveCb, rejectCb) => {
         resolve = resolveCb;
         reject = rejectCb;
     });
 
-    return { resolve, reject, promise };
+    return { resolve: resolve!, reject: reject!, promise };
 }
 
 // export function evalInScope(js, contextAsScope) {
@@ -583,4 +584,9 @@ export function patchReadFileSync(fs) {
         return orig_readFileSync(path, optionsOrEncoding);
     };
     return fs;
+}
+
+export function aquireNative() {
+    return Object.values(VencordNative.pluginHelpers)
+        .find(m => m.bdCompatLayerUniqueId) as PluginNative<typeof import("./native")>;
 }
