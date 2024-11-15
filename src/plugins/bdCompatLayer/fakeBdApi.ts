@@ -148,6 +148,9 @@ export const WebpackHolder = {
             first: false,
         });
     },
+    get getAllByKeys() {
+        return this.getAllByProps;
+    },
     getByProps(...props) {
         return this.getModule(this.Filters.byProps(...props), {});
     },
@@ -283,6 +286,9 @@ class DataWrapper {
 }
 
 export const UIHolder = {
+    alert(title: string, content: any) {
+        return this.showConfirmationModal(title, content, { cancelText: null });
+    },
     helper() {
         console.info("hi");
     },
